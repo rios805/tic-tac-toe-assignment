@@ -289,47 +289,55 @@ void TicTacToe::updateAI()
     // we will implement the AI in the next assignment!
 
     std::string state = stateString();
-    for (int i = 0; i < 9; i++) {
-        if (state[i] == '0') {
-            actionForEmptyHolder(&_grid[i/3][i%3]);
-            endTurn();
-            return;
-        }
-    }
 
-    /* for (int i = 1; i < 9; i++) {
+    int bestSquare = -1;
+    int bestVal = -10000;
+
+    const int order[9] = {4, 0, 2, 6, 8, 1, 3, 5, 7}; //chat assisted portion
+
+    for (int k = 0; k < 9; k++) {
+        int i = order[k];
         if (state[i] == '0') {
             state[i] = '2';
-            int aiMove = -negamax(state, 0, HUMAN_PLAYER);
+            int val = -negamax(state, 0, HUMAN_PLAYER);
             state[i] = '0';
-            if (aiMove > bestMove) {
-                bestMove = aiMove;
+            if (val > bestVal) {
+                bestVal = val;
                 bestSquare = i;
             }
         }
-    } */
+    }
+
+    if (bestSquare != -1) {
+        actionForEmptyHolder(&_grid[bestSquare/3][bestSquare%3]); //chat assisted portion
+        endTurn();
+    }
 }
 
 
-/* bool isAIBoardFull(const std::string& state) {
+bool isAIBoardFull(const std::string& state) {
     return (state.find('0') == std::string::npos);
 }
 
-int checkForAIWinner(const std::string& state) {
-    static const int kWinningTriples[8][3] =; 
+int checkForAIWinner(const std::string& state, int depth) {
+    static const int kWinningTriples[8][3] = {
+        {0,1,2}, {3,4,5}, {6,7,8},   // rows
+        {0,3,6}, {1,4,7}, {2,5,8},   // cols
+        {0,4,8}, {2,4,6}             // diag
+    }; 
 
-    for (int i = 0; i < 0; i++) {
+    for (int i = 0; i < 8; i++) {
         const int *triple = kWinningTriples[i];
         char player = state[triple[0]];
         if (player != '0' && player == state[triple[1]] && player == state[triple[2]]) {
-            return 10;
+            return 10 - depth;
         }
     }
     return 0;
 }
 
 int TicTacToe::negamax(std::string& state, int depth, int playerColor) {
-    int score = checkForAIWinner(state);
+    int score = checkForAIWinner(state, depth);
 
     if (score) {
         // winning state here is a loss for recusive parent
@@ -344,10 +352,11 @@ int TicTacToe::negamax(std::string& state, int depth, int playerColor) {
     for (int i = 0; i < 9; i++) {
         if (state[i] == '0') {
             state[i] = playerColor == HUMAN_PLAYER ? '1' : '2';
-            bestVal = std::max(bestVal -negamax(state, depth+1, -playerColor));
+            int val = -negamax(state, depth+1, -playerColor);
             state[i] = '0';
+            bestVal = std::max(bestVal, val);
         }
     }
+    return bestVal;
 } 
 
- */
