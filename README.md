@@ -23,6 +23,12 @@ A simple 2-player (with optional AI) Tic-Tac-Toe built on an ImGui-based framewo
   - Used a simple **fixed origin** (e.g., `ImVec2(32, 48)`) and laid out cells using `pitch = cell + gap`.
   - Avoided calling ImGui viewport APIs inside `setUpBoard()`.
   - Verified placements by ensuring `actionForEmptyHolder` sets the piece position to `holder->getPosition()` and then `holder->setBit(piece)`.
+- **AI Player Portion:**
+  - For each possible move, AI simulates placing an X and recursively evaluates outcomes with negamax.
+  - Wins are scored as 10 - depth, so AI prefers faster wins and delays losses.
+  - Negamax flips the score’s sign each recursion, so the same evaluation logic works from either player’s perspective.
+  - To break ties when multiple moves are equal, the move ordering favors center → corners → edges.
 
 This debugging was done with help from chat guidance to pinpoint that I needed **window-local** positioning and to ensure each cell was properly initialized.
+Chat guidance was used to also sort out the issues I had with unoptimal AI play patterns. Comments indicate where.
 
